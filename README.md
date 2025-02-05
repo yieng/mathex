@@ -1,2 +1,2 @@
 # mathex
-yanki
+For my student.
