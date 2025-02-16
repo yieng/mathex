@@ -6,6 +6,9 @@ try:
    N = int(input("Input the maximum coefficient for all questions in this session: "))
 except ValueError:
    N = 5 #default
+# to avoid errors in "random"
+if N<=0:
+   N = max(-N,5)
 
 correct_count = 0
 total_count = 0
