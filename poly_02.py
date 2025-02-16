@@ -4,7 +4,7 @@ import math
 # changing this number may necessitate changing the regex
 try:
    N = int(input("Input the maximum coefficient for all questions in this session: "))
-except TypeError:
+except ValueError:
    N = 5 #default
 
 correct_count = 0
