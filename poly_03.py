@@ -1,21 +1,16 @@
 import random
 import math
 
-# polynomials of (ax+by)(cx+dy) orn (ax+b)(cx+d) format
-
-
-
-
-
-
 # changing this number may necessitate changing the regex
 try:
-   N = int(input("Input the maximum coefficient for all questions in this session: "))
+   N = int(input("Input a positive integer: "))
 except ValueError:
    N = 5 #default
 # to avoid errors in "random"
 if N<=0:
    N = max(-N,5)
+
+
 
 correct_count = 0
 total_count = 0
@@ -28,11 +23,11 @@ success = ['✅','✔️','💯','🎯','🏆','🎉','🤗','🥳','😎','🥇
 try_again = ['🤔','💪','🧐']
 
 var_string = 'abcdefghmnpqrstuvwxyz'
-def getVar(var_string):
+def getVarConst(var_string):
    # randomly select 3 consecutive characters as variables/unknowns
    V = var_string
-   v = random.choice(V[0:-2])
-   var = [v, V[V.index(v)+1], random.choice([V[V.index(v)+2],''])]
+   v = random.choice(V)
+   var = [v, '']
    return var
 
 def tuple2polynomial(myTuple, var):
@@ -55,35 +50,66 @@ def tuple2polynomial(myTuple, var):
       polynomial = polynomial[1::]
    return polynomial
 
+# polynomials of (ax+by)(cx+dy) or (ax+b)(cx+d) format
+
 while True: # infinite loop
 
-   # of the format #(#x+#y) or #(#x+#y+#z).
-   # next time: (#a+#b)(#c+#d) and (#a+#b)(#c+#d+#e).
+   # of the format: (#a+#b)(#c+#d) - not yet (#a+#b)(#c+#d+#e).
    
-   tuplelength = random.randint(2,3)
-   var0 = getVar(var_string)
-   
-   # Power of (-1): 0 = positive, 1 = negative
-   coeff = [(-1)**random.randint(0,1)*random.randint(1,N) for j in range(tuplelength)]   
-   b = 1
-   while b==1:
-      b = (-1)**random.randint(0,1)*random.randint(1,N)
+   tuplelength = 2
+   var0 = getVarConst(var_string)
+   v = var0[0]
 
-   if b==-1:
-      b0 = '-'
-   else:
-      b0 = str(b)
+   print("=== Answer in the following format, \n=== with variable x and non-0,1 constants A, B, C: \n===      Ax^2±Bx±C \n=== (type '^' using SHIFT+6) :".replace('x',v))
 
-   expression = b0 + '(' + tuple2polynomial(coeff,var0) + ')'
-   
-   answerTuple = [b*coeff[i] for i in range(len(coeff))]
+   twoTuples = []
+
+   for k in range(0,2):
+      # Power of (-1): 0 = positive, 1 = negative
+      coeff = [(-1)**random.randint(0,1)*random.randint(1,N) for j in range(tuplelength)]   
+      #b = 1
+      #while b==1:
+      #   b = (-1)**random.randint(0,1)*random.randint(1,N)
+
+      #if b==-1:
+      #   b0 = '-'
+      #else:
+      #   b0 = str(b)
+
+      #expression = b0 + '(' + tuple2polynomial(coeff,var0) + ')'
       
+      #answerTuple = [b*coeff[i] for i in range(len(coeff))]
+
+      twoTuples.append(coeff)
+
+   monomials = [tuple2polynomial(t,var0) for t in twoTuples]
+   expression = ''.join(['('+m+')' for m in monomials])
+   # print(expression)
+
+   ## (3f+3)(2f-5) = 3f(2f-5)+3(2f-5) = vertical calc = 6f^2+9f-15
+
+   #print(twoTuples)
+
+   R = range(len(twoTuples))
+
+   coeff2 = eval('*'.join([str(twoTuples[i][0]) for i in R]))
+   #print(coeff2)
+   coeff0 = eval('*'.join([str(twoTuples[i][1]) for i in R]))
+   #print(coeff0)
+   coeff1 = []
+   coeff1.append('*'.join([str(twoTuples[i][j]) for j in R for i in R if i==j]))
+   coeff1.append('*'.join([str(twoTuples[i][j]) for j in R for i in R if i!=j]))
+   coeff1 = eval('+'.join(coeff1))
+
+   coeff_ = [coeff2, coeff1, coeff0]
+   var1 = [v+'^2', v, '']
+   
    first_try = True
    correct = False
    
    while not(correct):
        y = input(expression+' = ')
-       x = tuple2polynomial(answerTuple,var0)
+       x = tuple2polynomial(coeff_,var1)
        correct = (x==y)
 
        if correct:
@@ -97,6 +123,6 @@ while True: # infinite loop
           if first_try:
              total_count += 1
           first_try = False
-   print('Correct on first attempt: ', correct_count, '\nTotal questions attempted: ', total_count, '\n===')
+   print('Correct on first attempt: ', correct_count, '\nTotal questions attempted: ', total_count, '\n==================================================')
        
 
