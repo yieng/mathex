@@ -95,7 +95,7 @@ while True: # infinite loop
                       "The quantity has changed by P% to Y. What is the original quantity?",
                       "The quantity has changed by P% from X. What is the new quantity?"]
    qT = questionTuple()
-   qa = [[question_format[0], qT["+-"]+qT["%"]+'%'],
+   qa = [[question_format[0], qT["+-"]+str(int(qT["%"]))+'% '],
          [question_format[1], qT["old"]],
          [question_format[2], qT["new"]]]
    choice = random.choice(qa)
@@ -107,7 +107,7 @@ while True: # infinite loop
                               .replace(change_placeholder, change[qT["+-"]])\
                               .replace(percentage_placeholder, qT["%"])
 
-   print("=== % Percentage Change Answer Format %\n=== increase by 20% = +20%, decrease by 5% = -5% ===")
+   print("=== % Percentage Change Answer Format %\n=== increase by 20% = +20% <- add an extra space before you press ENTER\n=== decrease by 5% = -5% <- add an extra space after '%' ===")
    print(question_display)
       
    first_try = True
