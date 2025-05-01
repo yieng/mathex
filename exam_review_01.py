@@ -4,40 +4,34 @@ import math
 success = ['✅','✔️','💯','🎯','🏆','🎉','🤗','🥳','😎','🥇','💥','💖','🔥','❤️','⭐','🙌']
 try_again = ['🤔','💪','🧐']
 
-N = 20
-
-fivePercentOf100Denominator = 20
-
-aHundred = 100
-
-def neatPercentages(num):
-   available_divisors = [2, 4, 5, 10, 20] # 50%, 25%, 20%, 10%, 5%
-   approved_divisors = [a for a in available_divisors if num % a == 0]
-   percentages = [100//a for a in available_divisors if num % a == 0]
-   return percentages
-
-def questionTuple():
-   while True:
-      base_num = random.randint(1,N)
-      old = random.choice([base_num*i for i in range(1,N)])
-      neat_percentages = neatPercentages(old)
-      if len(neat_percentages)==0:
-         continue
-      percent_value = random.choice(neat_percentages)
-      direction = (-1)**random.randint(0,1) # (-1)^0 = 1, increase; (-1)^1 = -1, decrease
-      if direction==1:
-         sign = '+'
-      elif direction==-1:
-         sign = '-'
-      new = old + old*direction*percent_value//aHundred
-      questionTuple = {"old": str(old),
-                       "+-": sign,
-                       "%": str(percent_value),
-                       "new": str(new)}
-      return questionTuple
-
 correct_count = 0
 total_count = 0
+
+# Q1. A box contains 10 red cards and 90 yellow cards. What % of cards in the box are red?
+
+def q1_tuple():
+    N = random.randint(1,10)*100
+    x = random.randint(1,N)
+    y = N-x
+    pa = round(x/N*100,1)
+    pb = round(y/N*100,1)
+    return [x,y,pa,pb]
+
+def q1_generator(x,y):
+    containers = ['box','container','suitcase','bag','trolley','trunk','truck','luggage','wheelbarrow']
+    items = ['books', 'magazines', 'cards', 'dolls', 'stuffed animals', 'cups', 'water bottles', 'cookies', 'energy bars', 'tennis balls', 'sweatshirts', 'hats', 'scarves', 'gloves', 'umbrellas', 'pillows', 'blankets', 'headphones', 'earbuds', 'phone chargers', 'portable chargers', 'laptops', 'tablets', 'e-readers', 'cameras', 'snack bags', 'fresh fruit', 'nuts', 'dried fruit', 'granola bars', 'crackers', 'sandwiches', 'wraps', 'trail mix', 'candy', 'gum', 'mints', 'medicines', 'first aid kits', 'eye masks', 'earplugs', 'toothbrushes', 'hairbrushes', 'deodorant', 'lip balm', 'tissues', 'wet wipes', 'small toys', 'playing cards', 'board games']
+
+    q1_template = f"A container contains {x} item_a and {y} item_b. What percentage of objects in the container are item_a?"
+    q1a = q1_template.replace('container',random.choice(containers))\
+         .replace('item_a',random.choice(items))\
+         .replace('item_b',random.choice(items))
+    q1_template = f"A container contains {x} item_a and {y} item_b. What percentage of objects in the container are item_b?"
+    q1b = q1_template.replace('container',random.choice(containers))\
+         .replace('item_a',random.choice(items))\
+         .replace('item_b',random.choice(items))
+    return [q1a, q1b]
+
+
 
 # percentage & %∆ questions (in addition to polynomials; a mixed bag) <- new program!
 # remember to make QR code
@@ -47,68 +41,14 @@ total_count = 0
 while True: # infinite loop
 
    # Generate questions
-   change_terms = {"all": [["increased","decreased"], ["incremented","decreased"]],
-                   "price": [["risen","fallen"], ["risen","dropped"]],
-                   "size": [["enlarged","shrunken"], ["dilated","shrunken"]]}
-   quantity_terms = ["number of " + random.choice(["girls in ABC School",
-                                                   "number of pineapple buns sold in the morning",
-                                                   "seats in Auditorium 501",
-                                                   "Instagram followers Holly has",
-                                                   "views of Emily's animal documentary",
-                                                   "passengers on the 6pm flight to Hong Kong",
-                                                   "beds in Rosalie Hospital",
-                                                   ]),
-                     "size of " + random.choice(["Joanne's rice serving (in g)",
-                                                 "the population of Little Community (in thousands)",
-                                                 "each card that Fred buys for lunch (in cm^2)",
-                                                 "the unknown plant in Gerald's flowerpot (in cm)",
-                                                 "ice cream tubs that Donnie sells (in cm^3)",
-                                                 "medicine in Dr Bo's capsule (in mg)",
-                                                 "the country of Alapaca after their war with Blusaket (in km^3)"
-                                                 ]),
-                     "price ($) of " + random.choice(["a bottle of guava juice by Walter's Water",
-                                                  "a handbag made by Sandy",
-                                                  "a pasta bolognaise dish made by Chef John",
-                                                  "a cellphone sold by Thomas",
-                                                  "a baseball cap from George's shop"
-                                                  ]),
-                     "volume of " + random.choice(["water in Daisy's swimming pool (in L)",
-                                                   "orange juice in Eric's carton (in ml)",
-                                                   "wine in Mr Oldman's bottle (in ml)",
-                                                   "lavender-scented hand lotion (in ml)",
-                                                   "each ceramic bowl made by Nora (in ml)",])
-                     ]
-   Q = random.choice(quantity_terms)
-   if "price" in Q:
-      C = random.choice([*change_terms['all'], *change_terms['price']])
-   elif "size" in Q:
-      C = random.choice([*change_terms['all'], *change_terms['size']])
-   else:
-      C = random.choice(change_terms['all'])
-   change = {"+":C[0],"-":C[1]} # characteristic function
-   change_placeholder = "changed"
-   quantity_placeholder = "quantity"
-   old_placeholder = "X"
-   new_placeholder = "Y"
-   percentage_placeholder = "P"
-   question_format = ["The quantity has changed from X to Y. What is the percentage change?",
-                      "The quantity has changed by P% to Y. What is the original quantity?",
-                      "The quantity has changed by P% from X. What is the new quantity?"]
-   qT = questionTuple()
-   qa = [[question_format[0], qT["+-"]+str(int(qT["%"]))+'% '],
-         [question_format[1], qT["old"]],
-         [question_format[2], qT["new"]]]
-   choice = random.choice(qa)
-   question = choice[0]
-   answer = choice[1]
-   question_display = question.replace(old_placeholder, qT["old"])\
-                              .replace(new_placeholder, qT["new"])\
-                              .replace(quantity_placeholder, Q)\
-                              .replace(change_placeholder, change[qT["+-"]])\
-                              .replace(percentage_placeholder, qT["%"])
+   t1 = q1_tuple()
+   coin = random.randint(0,1)
+   question = q1_generator(t1[0], t1[1])[coin]
+   answer = str(t1[2::][coin]).replace('.0','')+'% '
 
+   print("=== Your answers should be rounded up to one decimal place. ===")
    print("=== % Percentage Change Answer Format %\n=== increase by 20% = +20% <- add an extra space before you press ENTER\n=== decrease by 5% = -5% <- add an extra space after '%' ===")
-   print(question_display)
+   print(question)
       
    first_try = True
    correct = False
